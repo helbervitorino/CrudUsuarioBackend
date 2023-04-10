@@ -2,8 +2,10 @@
 using CrudUsuarioBackend.DTO;
 using CrudUsuarioBackend.Entidades;
 using CrudUsuarioBackend.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace CrudUsuarioBackend.Serviço
 {
@@ -23,9 +25,7 @@ namespace CrudUsuarioBackend.Serviço
             if (usuarioExistente != null)
             {
                 usuarioExistente.NomeUsuario = usuario.NomeUsuario;
-                usuarioExistente.DataCadastro = usuario.DataCadastro;
                 usuarioExistente.MarcaCelular = usuario.MarcaCelular;
-                usuarioExistente.Mac = usuario.Mac;
                 usuarioExistente.Modelo = usuario.Modelo;
                 usuarioExistente.SistemaOperacional = usuario.SistemaOperacional;
 
@@ -65,6 +65,9 @@ namespace CrudUsuarioBackend.Serviço
 
         public void Cadastrar(Usuario usuario)
         {
+            usuario.Mac = GetMacAddress();
+            usuario.DataCadastro = DateTime.Now.Date;
+
             _context.Set<Usuario>().Add(usuario);
             _context.SaveChanges();
         }
@@ -78,6 +81,21 @@ namespace CrudUsuarioBackend.Serviço
                 _context.Set<Usuario>().Remove(usuario);
                 _context.SaveChanges();
             }
+        }
+
+
+        private string GetMacAddress()
+        {
+            var macAddr = string.Empty;
+            foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (nic.OperationalStatus == OperationalStatus.Up)
+                {
+                    macAddr = nic.GetPhysicalAddress().ToString();
+                    break;
+                }
+            }
+            return macAddr;
         }
     }
 }

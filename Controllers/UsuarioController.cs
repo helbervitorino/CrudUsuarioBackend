@@ -2,12 +2,14 @@
 using CrudUsuarioBackend.DTO;
 using CrudUsuarioBackend.Entidades;
 using CrudUsuarioBackend.Interface;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace crud_usuario_backend.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("CorsPolicy")]
     [ApiController]
     public class UsuarioController : ControllerBase
     {

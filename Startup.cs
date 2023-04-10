@@ -32,6 +32,18 @@ namespace crud_usuario_backend
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrudUsuarioBackend", Version = "v1" });
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
+            services.AddControllers();
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IUsuarioServico, UsuarioServico>();
@@ -50,12 +62,17 @@ namespace crud_usuario_backend
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCors(builder =>
+                builder.WithOrigins("http://localhost:3000;https://localhost:44337/swagger/index.html;http://172.19.240.1:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
+
     }
 }
